@@ -27,6 +27,7 @@ class CliTests(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertIn("research / mock-naive", out)
             self.assertIn("inventory / mock-careful", out)
+            self.assertIn("research / mock-retry", out)
             cli("compare", "--seed", "1", "--out", b)
             for name in ("report.json", "report.html"):
                 self.assertEqual(read(a, name), read(b, name))
@@ -41,8 +42,15 @@ class CliTests(unittest.TestCase):
             self.assertEqual([(r["agent"], r["model"], len(r["runs"])) for r in data],
                              [("research", "mock-careful", 5)])
 
+    def test_kinds_option(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(cli("run", "research", "--kinds", "stale,empty", "--out", d)[0], 0)
+            kinds = {x["kind"] for r in json.loads(read(d, "report.json")) for x in r["runs"]}
+            self.assertEqual(kinds, {"stale", "empty"})
+
     def test_bad_agent_and_bad_model_exit_2_without_traceback(self):
-        for argv in (("run", "nope"), ("run", "research", "--model", "llama")):
+        for argv in (("run", "nope"), ("run", "research", "--model", "llama"),
+                     ("run", "research", "--kinds", "nope")):
             with self.subTest(argv=argv):
                 code, _, err = cli(*argv)
                 self.assertEqual(code, 2)

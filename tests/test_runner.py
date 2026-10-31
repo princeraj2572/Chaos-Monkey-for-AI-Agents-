@@ -23,6 +23,13 @@ class RunnerTests(unittest.TestCase):
         self.assertGreater(r["counts"]["recovered"], 0)
         self.assertGreater(r["counts"]["flagged"], 0)
 
+    def test_kinds_filter_and_validation(self):
+        self.assertEqual(len(fault_space(TOY, ("empty",))), 4)
+        with self.assertRaises(ValueError):
+            fault_space(TOY, ("nope",))
+        runs = run_chaos(TOY, MockNaive(), kinds=("stale",))["runs"]
+        self.assertEqual({r["kind"] for r in runs}, {"stale"})
+
     def test_runs_limits_and_cycles(self):
         self.assertEqual(len(run_chaos(TOY, MockNaive(), runs=5)["runs"]), 5)
         self.assertEqual(len(run_chaos(TOY, MockNaive(), runs=30)["runs"]), 30)

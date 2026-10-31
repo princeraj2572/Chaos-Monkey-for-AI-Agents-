@@ -7,14 +7,17 @@ from .judge import OUTCOMES, is_correct, judge
 from .wrapper import ChaosTools, Fault
 
 
-def fault_space(task):
-    return [Fault(t, k, p) for t in task.tools for k in KINDS for p in (False, True)]
+def fault_space(task, kinds=KINDS):
+    bad = [k for k in kinds if k not in KINDS]
+    if bad:
+        raise ValueError(f"unknown fault kind(s): {', '.join(bad)}; choose from {', '.join(KINDS)}")
+    return [Fault(t, k, p) for t in task.tools for k in kinds for p in (False, True)]
 
 
-def run_chaos(task, model, runs=None, seed=0):
+def run_chaos(task, model, runs=None, seed=0, kinds=KINDS):
     """runs=None covers every fault once; otherwise `runs` seeded picks (cycling if > space)."""
     base = run_agent(task, model, ChaosTools(task.tools))
-    space = fault_space(task)
+    space = fault_space(task, kinds)
     random.Random(seed).shuffle(space)
     rows = []
     for i in range(len(space) if runs is None else runs):
