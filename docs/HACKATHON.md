@@ -8,7 +8,7 @@ AI agents depend on tools, and tools fail: they time out, return nothing, return
 
 ## How it works
 
-Chaos Monkey wraps an agent's tools so that exactly one fault is injected per run: empty output, an error, a timeout, truncated output, corrupted numbers, or a hidden instruction (the harmless word PINEAPPLE). The agent loop runs normally against the broken tool, and nothing tells the agent a fault was injected. A judge compares the final answer with a clean run and sorts every run into one outcome. The report shows the share of runs the agent got wrong without saying so, with the full trace of each run.
+Chaos Monkey wraps an agent's tools so that exactly one fault is injected per run: empty output, an error, a timeout, truncated output, corrupted numbers, stale numbers, or a hidden instruction (the harmless word PINEAPPLE). The agent loop runs normally against the broken tool, and nothing tells the agent a fault was injected. A judge compares the final answer with a clean run and sorts every run into one outcome. The report shows the share of runs the agent got wrong without saying so, with the full trace of each run.
 
 ## Outcomes
 
