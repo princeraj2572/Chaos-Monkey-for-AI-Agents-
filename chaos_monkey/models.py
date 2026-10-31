@@ -41,6 +41,8 @@ class ChatModel:
                 return json.loads(resp.read())
         except urllib.error.HTTPError as e:  # report status only; never echo request details
             raise RuntimeError(f"{self.provider} API returned HTTP {e.code}") from None
+        except (OSError, ValueError) as e:  # timeouts, refused connections, bad JSON
+            raise RuntimeError(f"{self.provider} request failed: {type(e).__name__}") from None
 
     def _complete(self, system, messages):
         if self.provider == "anthropic":

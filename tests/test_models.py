@@ -77,6 +77,14 @@ class ModelTests(unittest.TestCase):
         self.assertIn("401", str(cm.exception))
         self.assertNotIn(KEY, str(cm.exception))
 
+    def test_network_errors_become_runtime_errors(self):
+        for exc in (TimeoutError(), urllib.error.URLError("refused")):
+            with self.subTest(exc=type(exc).__name__):
+                with mock.patch("urllib.request.urlopen", side_effect=exc):
+                    with self.assertRaises(RuntimeError) as cm:
+                        run_agent(TOY, ChatModel("openai", "m"), ChaosTools(TOY.tools))
+                self.assertIn("request failed", str(cm.exception))
+
     def test_factory(self):
         self.assertEqual(make_model("mock-naive").name, "mock-naive")
         self.assertEqual(make_model("mock-retry").name, "mock-retry")
