@@ -16,7 +16,7 @@ Agents depend on tools, and tools fail. The dangerous case is not a crash; it is
 
 ## Honesty about the demo models
 
-`mock-naive` and `mock-careful` are **scripted mock models for reproducible demos, not language models**. Their numbers describe the scripts. Real-model numbers are reported separately when an API key is available; none are included yet (see [Real models](#real-models)).
+`mock-naive`, `mock-retry` and `mock-careful` are **scripted mock models for reproducible demos, not language models**: naive trusts every output, retry retries obviously bad output once, careful also cross-checks a second source and flags what it can't confirm. Their numbers describe the scripts. Real-model numbers are reported separately when an API key is available; none are included yet (see [Real models](#real-models)).
 
 ## Run it
 
@@ -46,7 +46,7 @@ python -m chaos_monkey run research --model mock-naive --runs 20 --seed 1
 python -m chaos_monkey compare research inventory --seed 1 --out out
 ```
 
-`run` uses one model (`--model`); `compare` uses several (`--models a,b`, default both mocks). With no agent names, all example agents run. `--runs` is the number of chaos runs per agent and model (default: every fault once). After `pip install -e .` the command is `chaos`. Same seed, same bytes: results are deterministic.
+`run` uses one model (`--model`); `compare` uses several (`--models a,b`, default all three mocks). `--kinds stale,empty` limits which faults are injected (default: all seven: `empty`, `error`, `timeout`, `truncated`, `corrupted`, `stale`, `injection`). With no agent names, all example agents run. `--runs` is the number of chaos runs per agent and model (default: every fault once). After `pip install -e .` the command is `chaos`. Same seed, same bytes: results are deterministic.
 
 ## Outcomes
 
