@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chaos-monkey-agents"
+version = "0.1.0"
+description = "Chaos engineering for AI agents: break their tools on purpose and measure what they silently get wrong."
+requires-python = ">=3.10"
+
+[project.scripts]
+chaos = "chaos_monkey.cli:main"
+
+[tool.setuptools]
+packages = ["chaos_monkey", "chaos_monkey.agents"]
