@@ -19,8 +19,7 @@ Scroll to the summary table.
 Say: "Same faults, same seed, two agents. The naive one fails silently on almost every injected run. The careful one retries, cross-checks a second source, and when it can't confirm something it says so: recovered or flagged, never silent."
 
 **1:45 — Real-model numbers**
-If a real-model report exists, open `docs/real-model-report.html` and say: "Against a real model, over 20 chaos runs, the silent-failure rate was [X] percent." Fill in the number from the report.
-If no real-model report exists, say: "Real-model numbers aren't in yet. Add an API key and the same command runs against a real model."
+Open `docs/real-model-report.html` and say: "I also ran it against a real model, a small local one, llama 3.2 through Ollama, for 20 chaos runs. 67 percent of the injected runs ended in a silent failure or a hijack. It's one small model and one seed, so it's a first data point, not a benchmark."
 
 **1:55 — Call to action**
 Say: "Chaos engineering for AI agents. Point it at an agent you own, and find out what it silently gets wrong before your users do. Code is on GitHub."
