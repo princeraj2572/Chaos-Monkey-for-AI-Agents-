@@ -27,4 +27,4 @@ Chaos Monkey wraps an agent's tools so that exactly one fault is injected per ru
 - The judge is a keyword heuristic: a run is correct if the answer contains the expected facts, and flagged if it contains words like "unable" or "unreliable". It can be wrong.
 - One fault per run. Combinations of failures are not tested.
 - Only run it against agents you own. It injects faults into tools you hand it; it does not attack anything.
-- No real-model results are included yet. They need an API key; see the README.
+- Real-model evidence is thin: one 20-run check against a small local model (llama3.2 via Ollama), see `docs/real-model-report.html`. No hosted-API model has been run yet.
