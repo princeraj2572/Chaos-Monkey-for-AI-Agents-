@@ -1,6 +1,7 @@
 """Scripted stand-ins for models (NOT language models), for reproducible demos.
 
-mock-naive trusts every tool output. mock-careful validates outputs, retries once,
+mock-naive trusts every tool output. mock-retry retries bad output once and nothing more.
+mock-careful validates outputs, retries once,
 cross-checks sources, and flags what it cannot confirm.
 """
 from .task import jparse
@@ -32,6 +33,18 @@ def _call(tool, args):
         if not _bad(out):
             return out
     return None
+
+
+class MockRetry:
+    """Retries obviously bad output once, but never cross-checks and never flags."""
+    name = "mock-retry"
+
+    def start(self, task):
+        res = []
+        for tool, args in task.plan:
+            out = yield from _call(tool, args(res))
+            res.append(out or "")
+        yield {"final": task.answer(res)}
 
 
 class MockCareful:

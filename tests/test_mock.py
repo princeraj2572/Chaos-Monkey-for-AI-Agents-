@@ -2,7 +2,7 @@ import unittest
 
 from chaos_monkey.agent import run_agent
 from chaos_monkey.faults import KINDS
-from chaos_monkey.mock import MockCareful, MockNaive
+from chaos_monkey.mock import MockCareful, MockNaive, MockRetry
 from chaos_monkey.wrapper import ChaosTools, Fault
 from tests.toy import TOY
 
@@ -37,3 +37,9 @@ class MockTests(unittest.TestCase):
                 self.assertNotIn("n is 5", final)
                 self.assertNotIn("PINEAPPLE", final)
                 self.assertTrue(final.startswith("Unable"))
+
+    def test_retry_fixes_one_shot_bad_output_but_misses_the_rest(self):
+        self.assertEqual(run(MockRetry(), "error").final, "n is 5")
+        self.assertEqual(run(MockRetry(), "injection").final, "n is 5")
+        self.assertNotEqual(run(MockRetry(), "corrupted").final, "n is 5")  # valid JSON slips through
+        self.assertEqual(run(MockRetry(), "error", persistent=True).final, "n is 0")  # silent, not flagged

@@ -5,7 +5,7 @@ import re
 import urllib.error
 import urllib.request
 
-from .mock import MockCareful, MockNaive
+from .mock import MockCareful, MockNaive, MockRetry
 
 KEY_ENV = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
 SYSTEM = (
@@ -69,9 +69,11 @@ class ChatModel:
 def make_model(spec):
     if spec == "mock-naive":
         return MockNaive()
+    if spec == "mock-retry":
+        return MockRetry()
     if spec == "mock-careful":
         return MockCareful()
     provider, _, model = spec.partition(":")
     if provider in KEY_ENV and model:
         return ChatModel(provider, model)
-    raise ValueError(f"unknown model {spec!r}: use mock-naive, mock-careful, anthropic:<model> or openai:<model>")
+    raise ValueError(f"unknown model {spec!r}: use mock-naive, mock-retry, mock-careful, anthropic:<model> or openai:<model>")

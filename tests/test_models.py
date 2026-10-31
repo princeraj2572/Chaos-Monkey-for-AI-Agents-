@@ -70,6 +70,7 @@ class ModelTests(unittest.TestCase):
 
     def test_factory(self):
         self.assertEqual(make_model("mock-naive").name, "mock-naive")
+        self.assertEqual(make_model("mock-retry").name, "mock-retry")
         self.assertEqual(make_model("openai:gpt-x").name, "openai:gpt-x")
         with self.assertRaises(ValueError):
             make_model("llama")
