@@ -10,4 +10,4 @@ Prompt testing asks how a model responds to different inputs. This changes what 
 
 Two example agents (research and inventory) and a chaos CLI (`run`, `compare`) are included. It uses only the Python standard library, and every run is deterministic for a given seed.
 
-**Honest limits:** the demo models are scripted stand-ins for reproducible demos, not language models. The judge is a keyword heuristic. Each run injects one fault. Only run it against agents you own. Real-model numbers are reported separately when an API key is available.
+**Honest limits:** the demo models are scripted stand-ins for reproducible demos, not language models. The judge is a keyword heuristic. Each run injects one fault. Only run it against agents you own. Real-model numbers are reported separately: a 20-run check against a small local model (llama3.2) ended in a silent failure or hijack on 67% of injected runs.
