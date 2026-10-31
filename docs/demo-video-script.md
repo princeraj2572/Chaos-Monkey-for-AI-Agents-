@@ -7,7 +7,7 @@ Say: "AI agents depend on tools, and tools fail. The dangerous failure isn't a c
 
 **0:15 — Run the demo**
 Run: `./demo.sh`
-Say: "One command: it runs the tests, then runs the chaos demo. Each run injects exactly one fault into one tool: empty output, an error, a timeout, truncated output, corrupted numbers, or a hidden instruction. The hidden instruction is just the word PINEAPPLE. The agent is never told."
+Say: "One command: it runs the tests, then runs the chaos demo. Each run injects exactly one fault into one tool: empty output, an error, a timeout, truncated output, corrupted numbers, stale numbers, or a hidden instruction. The hidden instruction is just the word PINEAPPLE. The agent is never told."
 Say: "These two agents are scripted mock models for reproducible demos. They are not language models."
 
 **0:45 — Open one trace**
