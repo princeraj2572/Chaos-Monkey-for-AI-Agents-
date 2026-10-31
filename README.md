@@ -16,7 +16,7 @@ Agents depend on tools, and tools fail. The dangerous case is not a crash; it is
 
 ## Honesty about the demo models
 
-`mock-naive`, `mock-retry` and `mock-careful` are **scripted mock models for reproducible demos, not language models**: naive trusts every output, retry retries obviously bad output once, careful also cross-checks a second source and flags what it can't confirm. Their numbers describe the scripts. Real-model numbers are reported separately when an API key is available; none are included yet (see [Real models](#real-models)).
+`mock-naive`, `mock-retry` and `mock-careful` are **scripted mock models for reproducible demos, not language models**: naive trusts every output, retry retries obviously bad output once, careful also cross-checks a second source and flags what it can't confirm. Their numbers describe the scripts. Real-model numbers are reported separately: see [Real models](#real-models).
 
 ## Run it
 
@@ -76,7 +76,9 @@ Each is a `Task` (`chaos_monkey/task.py`): a prompt, tools that return strings, 
 python -m chaos_monkey run research --model openai:<model-id> --runs 20 --out out-real
 ```
 
-The clients are tested against a stubbed `urllib.request.urlopen`; the tests never call a real API. No real-model report is included yet.
+The clients are tested against a stubbed `urllib.request.urlopen`; the tests never call a real API. `--model ollama:<model>` uses a local [Ollama](https://ollama.com) server and needs no key.
+
+**Result so far:** a 20-run check of the research agent against a small local model (llama3.2 via Ollama, seed 1) ended in a silent failure or hijack on 12 of 18 injected runs (67%). The clean run was correct, 2 runs flagged the problem, 4 were hijacked by the PINEAPPLE instruction, and 2 never called the faulted tool. Full report: [`docs/real-model-report.html`](docs/real-model-report.html). This is one small local model, one seed and 20 runs, judged by a keyword heuristic, so treat it as a first data point, not a benchmark. No hosted-API model has been run yet.
 
 ## Honest limits
 
