@@ -60,6 +60,15 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(req.full_url, "https://api.openai.com/v1/chat/completions")
         self.assertEqual(req.get_header("Authorization"), f"Bearer {KEY}")
 
+    def test_ollama_is_local_and_needs_no_key(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            with mock.patch("urllib.request.urlopen", side_effect=[openai_reply('{"final": "ok"}')]) as urlopen:
+                r = run_agent(TOY, make_model("ollama:llama3.2"), ChaosTools(TOY.tools))
+        self.assertEqual(r.final, "ok")
+        req = urlopen.call_args.args[0]
+        self.assertTrue(req.full_url.startswith("http://127.0.0.1:11434/"))
+        self.assertIsNone(req.get_header("Authorization"))
+
     def test_http_error_does_not_leak_key(self):
         err = urllib.error.HTTPError("https://x", 401, "bad", {}, io.BytesIO(KEY.encode()))
         with mock.patch("urllib.request.urlopen", side_effect=err):

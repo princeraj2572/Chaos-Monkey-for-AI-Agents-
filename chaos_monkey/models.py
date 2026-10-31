@@ -7,7 +7,8 @@ import urllib.request
 
 from .mock import MockCareful, MockNaive, MockRetry
 
-KEY_ENV = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
+KEY_ENV = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}  # ollama (local) needs no key
+OLLAMA_URL = "http://127.0.0.1:11434/v1/chat/completions"
 SYSTEM = (
     "You are an agent that completes a task using tools. Reply with ONLY one JSON object per turn: "
     '{"tool": "<name>", "args": {...}} to call a tool, or {"final": "<answer>"} when done. '
@@ -28,15 +29,15 @@ def parse_action(text):
 class ChatModel:
     def __init__(self, provider, model):
         self.provider, self.model, self.name = provider, model, f"{provider}:{model}"
-        self._key = os.environ.get(KEY_ENV[provider])
-        if not self._key:
+        self._key = os.environ.get(KEY_ENV.get(provider, ""))
+        if provider in KEY_ENV and not self._key:
             raise RuntimeError(f"{KEY_ENV[provider]} is not set")
 
     def _post(self, url, headers, body):
         req = urllib.request.Request(
             url, json.dumps(body).encode(), {"content-type": "application/json", **headers})
         try:
-            with urllib.request.urlopen(req, timeout=60) as resp:
+            with urllib.request.urlopen(req, timeout=180) as resp:
                 return json.loads(resp.read())
         except urllib.error.HTTPError as e:  # report status only; never echo request details
             raise RuntimeError(f"{self.provider} API returned HTTP {e.code}") from None
@@ -47,8 +48,9 @@ class ChatModel:
                            {"x-api-key": self._key, "anthropic-version": "2023-06-01"},
                            {"model": self.model, "max_tokens": 1024, "system": system, "messages": messages})
             return r["content"][0]["text"]
-        r = self._post("https://api.openai.com/v1/chat/completions",
-                       {"authorization": f"Bearer {self._key}"},
+        url, headers = (OLLAMA_URL, {}) if self.provider == "ollama" else (
+            "https://api.openai.com/v1/chat/completions", {"authorization": f"Bearer {self._key}"})
+        r = self._post(url, headers,
                        {"model": self.model, "messages": [{"role": "system", "content": system}] + messages})
         return r["choices"][0]["message"]["content"]
 
@@ -74,6 +76,6 @@ def make_model(spec):
     if spec == "mock-careful":
         return MockCareful()
     provider, _, model = spec.partition(":")
-    if provider in KEY_ENV and model:
+    if (provider in KEY_ENV or provider == "ollama") and model:
         return ChatModel(provider, model)
-    raise ValueError(f"unknown model {spec!r}: use mock-naive, mock-retry, mock-careful, anthropic:<model> or openai:<model>")
+    raise ValueError(f"unknown model {spec!r}: use mock-naive, mock-retry, mock-careful, anthropic:<model>, openai:<model> or ollama:<model>")
