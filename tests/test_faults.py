@@ -9,7 +9,7 @@ class FaultTests(unittest.TestCase):
     OUT = '{"a": 5, "b": ["x"], "c": 7}'
 
     def test_kinds(self):
-        self.assertEqual(set(KINDS), {"empty", "error", "timeout", "truncated", "corrupted", "injection"})
+        self.assertEqual(set(KINDS), {"empty", "error", "timeout", "truncated", "corrupted", "stale", "injection"})
 
     def test_empty_and_error(self):
         self.assertEqual(FAULTS["empty"](self.OUT, random.Random(0)), "")
@@ -34,6 +34,12 @@ class FaultTests(unittest.TestCase):
         out = json.loads(FAULTS["corrupted"](self.OUT, random.Random(0)))
         self.assertNotEqual(out["a"], 5)
         self.assertNotEqual(out["c"], 7)
+        self.assertEqual(out["b"], ["x"])
+
+    def test_stale_rolls_ints_back(self):
+        out = json.loads(FAULTS["stale"](self.OUT, random.Random(0)))
+        self.assertLess(out["a"], 5)
+        self.assertLess(out["c"], 7)
         self.assertEqual(out["b"], ["x"])
 
     def test_corrupted_deterministic_and_passes_non_json(self):

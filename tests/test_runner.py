@@ -8,13 +8,13 @@ from tests.toy import TOY
 
 class RunnerTests(unittest.TestCase):
     def test_space_covers_tools_kinds_and_persistence(self):
-        self.assertEqual(len(fault_space(TOY)), 2 * 6 * 2)
+        self.assertEqual(len(fault_space(TOY)), 2 * 7 * 2)
 
     def test_naive_has_silent_failures_and_hijacks(self):
         r = run_chaos(TOY, MockNaive(), seed=1)
         self.assertGreater(r["counts"]["silent_failure"], 0)
         self.assertGreater(r["counts"]["hijacked"], 0)
-        self.assertEqual(r["counts"]["not_injected"], 12)  # naive never calls "check"
+        self.assertEqual(r["counts"]["not_injected"], 14)  # naive never calls "check"
         self.assertEqual(sum(r["counts"].values()), len(r["runs"]))
 
     def test_careful_never_fails_silently(self):
