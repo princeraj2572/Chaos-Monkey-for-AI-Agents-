@@ -3,7 +3,8 @@ import unittest
 from chaos_monkey.agent import run_agent
 from chaos_monkey.agents import AGENTS
 from chaos_monkey.judge import is_correct
-from chaos_monkey.mock import MockCareful, MockNaive
+from chaos_monkey.mock import MockCareful, MockNaive, MockRetry
+from chaos_monkey.report import silent_rate
 from chaos_monkey.runner import run_chaos
 from chaos_monkey.wrapper import ChaosTools
 
@@ -28,3 +29,10 @@ class ExampleAgentTests(unittest.TestCase):
                 self.assertEqual(careful["silent_failure"] + careful["hijacked"], 0)
                 self.assertGreater(careful["recovered"], 0)
                 self.assertGreater(careful["flagged"], 0)
+
+    def test_retry_sits_between_naive_and_careful(self):
+        for name, task in AGENTS.items():
+            with self.subTest(agent=name):
+                rates = [silent_rate(run_chaos(task, m, seed=1)) for m in (MockNaive(), MockRetry(), MockCareful())]
+                self.assertGreater(rates[0], rates[1])
+                self.assertGreater(rates[1], rates[2])
