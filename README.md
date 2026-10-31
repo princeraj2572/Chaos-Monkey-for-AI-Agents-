@@ -8,7 +8,7 @@ Submission for Remote Control AI hackathon, Nov 2026.
 
 ## What it is
 
-A small Python tool that wraps an agent's tools and injects exactly one fault per run: empty output, an error, a timeout, truncated output, corrupted numbers, or a hidden instruction (the harmless word `PINEAPPLE`). The agent is not told. A judge compares the final answer with a clean run and labels each run, and the report shows how often the agent was wrong without saying so.
+A small Python tool that wraps an agent's tools and injects exactly one fault per run: empty output, an error, a timeout, truncated output, corrupted numbers, stale numbers, or a hidden instruction (the harmless word `PINEAPPLE`). The agent is not told. A judge compares the final answer with a clean run and labels each run, and the report shows how often the agent was wrong without saying so.
 
 ## Why
 
