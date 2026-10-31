@@ -23,7 +23,7 @@ Chaos Monkey wraps an agent's tools so that exactly one fault is injected per ru
 
 ## Honest limits
 
-- The demo models (`mock-naive`, `mock-careful`) are scripted, not language models. They exist for reproducible demos. Their numbers describe the scripts, not any real model.
+- The demo models (`mock-naive`, `mock-retry`, `mock-careful`) are scripted, not language models. They exist for reproducible demos. Their numbers describe the scripts, not any real model.
 - The judge is a keyword heuristic: a run is correct if the answer contains the expected facts, and flagged if it contains words like "unable" or "unreliable". It can be wrong.
 - One fault per run. Combinations of failures are not tested.
 - Only run it against agents you own. It injects faults into tools you hand it; it does not attack anything.
