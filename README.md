@@ -72,6 +72,8 @@ Each is a `Task` (`chaos_monkey/task.py`): a prompt, tools that return strings, 
 
 ## Real models
 
+**Live demo against a real model:** `./demo-real.sh` (or `make demo-real`) warms up a local Ollama model, runs the research agent with each run's outcome printed as it finishes (`--live`), and opens the report. `RUNS=6 ./demo-real.sh` is a quick version. Set `CHAOS_MODEL=openai:<model-id>` or `anthropic:<model-id>` (with the matching API key) to use a hosted model instead.
+
 `--model anthropic:<model-id>` or `--model openai:<model-id>` drives the agent loop with a real model over the provider's HTTP API. Set `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` in your environment; the key is never printed or logged. Example:
 
 ```sh
