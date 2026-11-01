@@ -7,7 +7,7 @@ import unittest
 
 from chaos_monkey.judge import OUTCOMES
 from chaos_monkey.mock import MockCareful, MockNaive
-from chaos_monkey.report import (render_csv, render_html, render_json, render_text, silent_rate,
+from chaos_monkey.report import (render_csv, render_html, render_json, render_markdown, render_text, silent_rate,
                                  write_reports)
 from chaos_monkey.runner import run_chaos
 from tests.toy import TOY
@@ -53,6 +53,13 @@ class ReportTests(unittest.TestCase):
         self.assertEqual(rows[0][:2], ["agent", "model"])
         self.assertEqual(len(rows) - 1, sum(len(r["runs"]) for r in rs))
         self.assertIn("silent_failure", {row[7] for row in rows[1:]})
+
+    def test_markdown_table(self):
+        md = render_markdown(results())
+        lines = md.splitlines()
+        self.assertTrue(lines[0].startswith("| Agent | Model |"))
+        self.assertIn("| toy | mock-naive |", md)
+        self.assertIn("not language models", md)
 
     def test_write_reports(self):
         with tempfile.TemporaryDirectory() as d:

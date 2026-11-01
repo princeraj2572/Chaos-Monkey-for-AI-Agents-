@@ -47,6 +47,18 @@ def render_csv(results):
     return buf.getvalue()
 
 
+def render_markdown(results):
+    """A pasteable summary table."""
+    head = ["Agent", "Model", "Runs", "Silent-failure rate", *OUTCOMES]
+    lines = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
+    for r in results:
+        cells = [r["agent"], r["model"], len(r["runs"]), f"{silent_rate(r):.0%}", *(r["counts"][o] for o in OUTCOMES)]
+        lines.append("| " + " | ".join(str(c) for c in cells) + " |")
+    if _has_mock(results):
+        lines += ["", f"_{MOCK_NOTE}_"]
+    return "\n".join(lines) + "\n"
+
+
 def render_text(results):
     lines = []
     for r in results:
@@ -134,7 +146,8 @@ def render_html(results):
 def write_reports(results, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     paths = {}
-    for name, render in (("report.json", render_json), ("report.csv", render_csv), ("report.html", render_html)):
+    for name, render in (("report.json", render_json), ("report.csv", render_csv),
+                           ("report.md", render_markdown), ("report.html", render_html)):
         paths[name] = os.path.join(out_dir, name)
         with open(paths[name], "w", encoding="utf-8", newline="\n") as f:
             f.write(render(results))
