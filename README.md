@@ -25,7 +25,7 @@ Python 3.10+, no dependencies.
 ```sh
 ./demo.sh          # venv, tests, demo, opens the report
 make test          # unit tests
-make demo          # writes out/report.html and out/report.json
+make demo          # writes out/report.html, report.json and report.csv
 ```
 
 Without `make`: `python -m unittest discover -s tests -t .` and `python -m chaos_monkey compare --seed 1 --out out`.
@@ -65,6 +65,7 @@ The **silent-failure rate** is (`silent_failure` + `hijacked`) divided by inject
 
 - `research`: finds the most-cited paper using `search` and `fetch`.
 - `inventory`: decides whether to reorder a SKU using `get_stock` and `get_reorder_point`.
+- `refund`: decides whether an order is refundable using `get_order` and `get_policy`.
 
 Each is a `Task` (`chaos_monkey/task.py`): a prompt, tools that return strings, and the facts a correct answer must contain. Add yours to `chaos_monkey/agents/__init__.py`.
 
