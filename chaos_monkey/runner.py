@@ -14,13 +14,15 @@ def fault_space(task, kinds=KINDS):
     return [Fault(t, k, p) for t in task.tools for k in kinds for p in (False, True)]
 
 
-def run_chaos(task, model, runs=None, seed=0, kinds=KINDS):
-    """runs=None covers every fault once; otherwise `runs` seeded picks (cycling if > space)."""
+def run_chaos(task, model, runs=None, seed=0, kinds=KINDS, on_run=None):
+    """runs=None covers every fault once; otherwise `runs` seeded picks (cycling if > space).
+    on_run(i, total, row) is called after each run, for live progress."""
     base = run_agent(task, model, ChaosTools(task.tools))
     space = fault_space(task, kinds)
     random.Random(seed).shuffle(space)
     rows = []
-    for i in range(len(space) if runs is None else runs):
+    total = len(space) if runs is None else runs
+    for i in range(total):
         fault = space[i % len(space)]
         tools = ChaosTools(task.tools, fault, seed)
         r = run_agent(task, model, tools)
@@ -30,6 +32,8 @@ def run_chaos(task, model, runs=None, seed=0, kinds=KINDS):
             "outcome": judge(task, r.final, tools.injected, len(r.trace) > len(base.trace)),
             "final": r.final, "trace": r.trace,
         })
+        if on_run:
+            on_run(i + 1, total, rows[-1])
     counts = {o: sum(r["outcome"] == o for r in rows) for o in OUTCOMES}
     return {
         "agent": task.name, "model": model.name, "seed": seed,

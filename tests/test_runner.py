@@ -30,6 +30,11 @@ class RunnerTests(unittest.TestCase):
         runs = run_chaos(TOY, MockNaive(), kinds=("stale",))["runs"]
         self.assertEqual({r["kind"] for r in runs}, {"stale"})
 
+    def test_on_run_reports_progress(self):
+        seen = []
+        run_chaos(TOY, MockNaive(), runs=3, on_run=lambda i, total, row: seen.append((i, total, row["outcome"])))
+        self.assertEqual([(i, t) for i, t, _ in seen], [(1, 3), (2, 3), (3, 3)])
+
     def test_runs_limits_and_cycles(self):
         self.assertEqual(len(run_chaos(TOY, MockNaive(), runs=5)["runs"]), 5)
         self.assertEqual(len(run_chaos(TOY, MockNaive(), runs=30)["runs"]), 30)
