@@ -38,6 +38,7 @@ docker run --rm -v "$PWD/out:/app/out" chaos-monkey
 ```
 
 A committed sample is in [`docs/sample-report.html`](docs/sample-report.html).
+In the HTML report each square is one chaos run, colored by outcome. Click a square to open that run's trace (the injected fault is marked on the exact call), or click an outcome chip to filter.
 
 ## CLI
 
