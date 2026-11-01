@@ -8,3 +8,7 @@ test:
 demo:
 	$(PYTHON) -m chaos_monkey compare --seed 1 --out out
 	@echo "Report: out/report.html"
+
+.PHONY: demo-real
+demo-real:
+	sh ./demo-real.sh
