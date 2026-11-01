@@ -29,7 +29,7 @@ class CliTests(unittest.TestCase):
             self.assertIn("inventory / mock-careful", out)
             self.assertIn("research / mock-retry", out)
             cli("compare", "--seed", "1", "--out", b)
-            for name in ("report.json", "report.html"):
+            for name in ("report.json", "report.csv", "report.html"):
                 self.assertEqual(read(a, name), read(b, name))
             cli("compare", "--seed", "2", "--out", b)
             self.assertNotEqual(read(a, "report.json"), read(b, "report.json"))

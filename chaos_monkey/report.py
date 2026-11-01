@@ -1,5 +1,7 @@
 """Reports: terminal text, JSON, and a self-contained HTML page."""
+import csv
 import html
+import io
 import json
 import os
 
@@ -31,6 +33,18 @@ def _has_mock(results):
 
 def render_json(results):
     return json.dumps(results, indent=2, sort_keys=True) + "\n"
+
+
+def render_csv(results):
+    """One row per chaos run, for spreadsheets."""
+    buf = io.StringIO()
+    w = csv.writer(buf, lineterminator="\n")
+    w.writerow(["agent", "model", "seed", "fault", "tool", "kind", "persistent", "outcome", "final"])
+    for r in results:
+        for x in r["runs"]:
+            w.writerow([r["agent"], r["model"], r["seed"], x["fault"], x["tool"], x["kind"],
+                        x["persistent"], x["outcome"], x["final"]])
+    return buf.getvalue()
 
 
 def render_text(results):
@@ -120,7 +134,7 @@ def render_html(results):
 def write_reports(results, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     paths = {}
-    for name, render in (("report.json", render_json), ("report.html", render_html)):
+    for name, render in (("report.json", render_json), ("report.csv", render_csv), ("report.html", render_html)):
         paths[name] = os.path.join(out_dir, name)
         with open(paths[name], "w", encoding="utf-8", newline="\n") as f:
             f.write(render(results))

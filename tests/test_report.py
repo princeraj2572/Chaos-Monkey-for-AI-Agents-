@@ -1,3 +1,5 @@
+import csv
+import io
 import json
 import os
 import tempfile
@@ -5,7 +7,8 @@ import unittest
 
 from chaos_monkey.judge import OUTCOMES
 from chaos_monkey.mock import MockCareful, MockNaive
-from chaos_monkey.report import render_html, render_json, render_text, silent_rate, write_reports
+from chaos_monkey.report import (render_csv, render_html, render_json, render_text, silent_rate,
+                                 write_reports)
 from chaos_monkey.runner import run_chaos
 from tests.toy import TOY
 
@@ -43,6 +46,13 @@ class ReportTests(unittest.TestCase):
         for r in rs:
             r["model"] = "openai:x"
         self.assertNotIn("scripted stand-ins", render_html(rs))
+
+    def test_csv_has_header_and_one_row_per_run(self):
+        rs = results()
+        rows = list(csv.reader(io.StringIO(render_csv(rs))))
+        self.assertEqual(rows[0][:2], ["agent", "model"])
+        self.assertEqual(len(rows) - 1, sum(len(r["runs"]) for r in rs))
+        self.assertIn("silent_failure", {row[7] for row in rows[1:]})
 
     def test_write_reports(self):
         with tempfile.TemporaryDirectory() as d:
