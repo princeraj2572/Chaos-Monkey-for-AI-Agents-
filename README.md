@@ -25,7 +25,7 @@ Python 3.10+, no dependencies.
 ```sh
 ./demo.sh          # venv, tests, demo, opens the report
 make test          # unit tests
-make demo          # writes out/report.html, report.json and report.csv
+make demo          # writes out/report.html, .json, .csv and .md
 ```
 
 Without `make`: `python -m unittest discover -s tests -t .` and `python -m chaos_monkey compare --seed 1 --out out`.
