@@ -10,8 +10,8 @@ from chaos_monkey.wrapper import ChaosTools
 
 
 class ExampleAgentTests(unittest.TestCase):
-    def test_both_examples_registered(self):
-        self.assertEqual(set(AGENTS), {"research", "inventory"})
+    def test_examples_registered(self):
+        self.assertEqual(set(AGENTS), {"research", "inventory", "refund"})
 
     def test_clean_runs_are_correct_for_both_mocks(self):
         for name, task in AGENTS.items():

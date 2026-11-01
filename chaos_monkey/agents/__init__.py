@@ -1,4 +1,4 @@
 """Example agents, keyed by CLI name."""
-from . import inventory, research
+from . import inventory, refund, research
 
-AGENTS = {"research": research.TASK, "inventory": inventory.TASK}
+AGENTS = {"research": research.TASK, "inventory": inventory.TASK, "refund": refund.TASK}
