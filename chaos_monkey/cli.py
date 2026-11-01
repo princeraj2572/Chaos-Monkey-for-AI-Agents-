@@ -19,6 +19,7 @@ def main(argv=None):
         s.add_argument("--seed", type=int, default=0)
         s.add_argument("--kinds", help="comma-separated fault kinds to inject (default: all)")
         s.add_argument("--out", default="out", help="report directory")
+        s.add_argument("--live", action="store_true", help="print each run's outcome as it finishes")
         if name == "run":
             s.add_argument("--model", default="mock-naive")
         else:
@@ -32,7 +33,12 @@ def main(argv=None):
             raise ValueError(f"unknown agent(s): {', '.join(unknown)}")
         models = [make_model(s) for s in specs]
         kinds = tuple(a.kinds.split(",")) if a.kinds else KINDS
-        results = [run_chaos(AGENTS[n], m, a.runs, a.seed, kinds) for n in names for m in models]
+        results = []
+        for n in names:
+            for m in models:
+                show = (lambda i, total, row, n=n, m=m: print(
+                    f"[{i:>2}/{total}] {n} {m.name}  {row['fault']}  ->  {row['outcome']}", flush=True)) if a.live else None
+                results.append(run_chaos(AGENTS[n], m, a.runs, a.seed, kinds, show))
     except (ValueError, RuntimeError) as e:
         print(f"chaos: {e}", file=sys.stderr)
         return 2

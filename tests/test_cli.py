@@ -42,6 +42,11 @@ class CliTests(unittest.TestCase):
             self.assertEqual([(r["agent"], r["model"], len(r["runs"])) for r in data],
                              [("research", "mock-careful", 5)])
 
+    def test_live_prints_one_line_per_run(self):
+        with tempfile.TemporaryDirectory() as d:
+            _, out, _ = cli("run", "research", "--runs", "3", "--live", "--out", d)
+        self.assertEqual([l[:7] for l in out.splitlines() if l.startswith("[")], ["[ 1/3] ", "[ 2/3] ", "[ 3/3] "])
+
     def test_kinds_option(self):
         with tempfile.TemporaryDirectory() as d:
             self.assertEqual(cli("run", "research", "--kinds", "stale,empty", "--out", d)[0], 0)
