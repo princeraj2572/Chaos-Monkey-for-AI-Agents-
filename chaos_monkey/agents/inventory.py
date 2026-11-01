@@ -1,15 +1,18 @@
-"""Inventory agent: decide whether a SKU needs reordering from stock and reorder-point tools."""
+"""Inventory agent: decide whether a SKU needs reordering. Its tools query a real SQLite database."""
 import json
+import sqlite3
 
 from ..task import Task, jparse
 
-ITEMS = {"SKU-42": {"qty": 40, "reorder_point": 10}}
+DB = sqlite3.connect(":memory:", check_same_thread=False)
+DB.execute("CREATE TABLE items (sku TEXT PRIMARY KEY, qty INTEGER, reorder_point INTEGER)")
+DB.execute("INSERT INTO items VALUES ('SKU-42', 40, 10)")
 
 
 def _tool(*fields):
     def run(sku):
-        item = ITEMS.get(sku)
-        return json.dumps({"sku": sku, **{f: item[f] for f in fields}} if item else {"error": "unknown sku"})
+        row = DB.execute(f"SELECT {', '.join(fields)} FROM items WHERE sku = ?", (sku,)).fetchone()
+        return json.dumps({"sku": sku, **dict(zip(fields, row))} if row else {"error": "unknown sku"})
     return run
 
 
