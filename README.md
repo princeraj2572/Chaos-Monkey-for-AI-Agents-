@@ -65,7 +65,7 @@ The **silent-failure rate** is (`silent_failure` + `hijacked`) divided by inject
 ## Example agents
 
 - `research`: finds the most-cited paper using `search` and `fetch`.
-- `inventory`: decides whether to reorder a SKU using `get_stock` and `get_reorder_point`.
+- `inventory`: decides whether to reorder a SKU using `get_stock` and `get_reorder_point`, which run SQL against a real in-memory SQLite database.
 - `refund`: decides whether an order is refundable using `get_order` and `get_policy`.
 
 Each is a `Task` (`chaos_monkey/task.py`): a prompt, tools that return strings, and the facts a correct answer must contain. Add yours to `chaos_monkey/agents/__init__.py`.
